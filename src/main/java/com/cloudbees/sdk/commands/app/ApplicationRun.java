@@ -4,23 +4,30 @@ import com.cloudbees.api.ApplicationResourceListResponse;
 import com.cloudbees.api.ParameterSettingsInfo;
 import com.cloudbees.api.ResourceSettingsInfo;
 import com.cloudbees.api.StaxClient;
+import com.cloudbees.sdk.CommandServiceImpl;
+import com.cloudbees.sdk.Plugin;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
+import com.cloudbees.sdk.cli.CommandService;
 import com.cloudbees.sdk.commands.Command;
 import com.cloudbees.sdk.utils.Helper;
 import com.cloudbees.utils.ZipHelper;
-import com.staxnet.appserver.IAppServerConfiguration;
-import com.staxnet.appserver.StaxSdkAppServer;
-import com.staxnet.appserver.WarBasedServerConfiguration;
 import com.staxnet.appserver.config.AppConfig;
 import com.staxnet.appserver.config.AppConfigHelper;
-import com.staxnet.appserver.config.ResourceConfig;
 import com.thoughtworks.xstream.XStream;
 
-import java.io.*;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -32,6 +39,8 @@ import java.util.zip.ZipFile;
 @CLICommand("app:run")
 public class ApplicationRun extends Command {
 
+    @Inject
+    private CommandService commandService;
     /**
      * Configuration environments to use.
      */
@@ -60,6 +69,8 @@ public class ApplicationRun extends Command {
     private Boolean noResourceFetch;
     private String appid;
     private String account;
+
+    private Thread server;
 
     public ApplicationRun() {
         setArgumentExpected(1);
@@ -171,7 +182,6 @@ public class ApplicationRun extends Command {
 
     boolean cleanWebRoot = false;
     File webRoot = null;
-    StaxSdkAppServer server;
     File appserverXML;
 
     @Override
@@ -205,8 +215,6 @@ public class ApplicationRun extends Command {
             staxWebXml = new File(webRoot, "WEB-INF/stax-web.xml");
 
         StaxClient client = getStaxClient(StaxClient.class);
-
-        String[] environments = getEnvironments(appConfig, environment);
 
         appserverXML = new File("appserver.xml");
         if (!appserverXML.exists()) {
@@ -242,36 +250,30 @@ public class ApplicationRun extends Command {
             }
         }
 
-        IAppServerConfiguration config = WarBasedServerConfiguration.load(appserverXML, webRoot, staxWebXml, environments);
+        String[] environments = getEnvironments(appConfig, environment);
 
-        if (staxWebXml.exists()) {
-            // Resolve variables
-            String appxml = readFile(staxWebXml);
-            for (Map.Entry<String, String> entry: getSystemProperties(config).entrySet()) {
-                appxml = appxml.replaceAll("\\$\\{" + entry.getKey() + "\\}", entry.getValue());
-            }
-            saveFile(staxWebXml, appxml);
+        // Create a special class loader for tomcat without any of the SDK classes
+        Plugin plugin = ((CommandServiceImpl)commandService).getPlugin("app-plugin");
+        ClassLoader classLoader = createClassLoader(plugin.getJars(), ClassLoader.getSystemClassLoader().getParent());
 
-            if (appserverXML.exists()) {
-                appxml = readFile(appserverXML);
-                for (Map.Entry<String, String> entry: getSystemProperties(config).entrySet()) {
-                    appxml = appxml.replaceAll("\\$\\{" + entry.getKey() + "\\}", entry.getValue());
-                }
-                saveFile(appserverXML, appxml);
-            }
-
-            config = WarBasedServerConfiguration.load(appserverXML, webRoot, staxWebXml, environments);
-        }
-
-        getWorkDir().mkdirs();
-        server = new StaxSdkAppServer(new File(getTmpDir()).getAbsolutePath(),
-                getWorkDir().getAbsolutePath(),
-                getClass().getClassLoader(), new String[0],
-                getPort(), config, null);
-
+        Object[] rc = new Object[]{appserverXML, environments, getTmpDir(), webRoot, new Integer(getPort()), staxWebXml};
+        Class<?> runUtilClass = Class.forName("com.cloudbees.sdk.commands.app.run.RunUtil", true, classLoader);
+        Constructor c = runUtilClass.getConstructors()[0];
+        c.setAccessible(true);
+        server = (Thread) c.newInstance(rc);
         server.start();
 
         return true;
+    }
+
+    private ClassLoader createClassLoader(List<String> jars, ClassLoader parent) throws MalformedURLException {
+        List<URL> urls = new ArrayList<URL>();
+        if (jars != null) {
+            for (String jar : jars) {
+                urls.add(new File(jar).toURI().toURL());
+            }
+        }
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
     }
 
     private String[] getEnvironments(File staxappxmlFile, String envString)
@@ -314,55 +316,10 @@ public class ApplicationRun extends Command {
 
     @Override
     public void stop() {
-        if (server != null) server.stop();
+        if (server != null) server.interrupt();
         if (cleanWebRoot) Helper.deleteDirectory(webRoot);
         if (appserverXML.exists())
             appserverXML.delete();
     }
 
-    private String readFile(File file) throws IOException {
-        FileReader fr = null;
-        try {
-            fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String line;
-            StringBuffer result = new StringBuffer();
-            while ((line = br.readLine()) != null) {
-                result.append(line);
-            }
-
-            return result.toString();
-        } finally {
-            if (fr != null) fr.close();
-        }
-    }
-
-    private void saveFile(File staxWebXml, String appxml) throws IOException {
-        FileWriter fos = null;
-        try {
-            fos = new FileWriter(staxWebXml);
-            fos.write(appxml);
-        } finally {
-            if (fos != null)
-                fos.close();
-        }
-    }
-
-    private Map<String, String> getSystemProperties(IAppServerConfiguration config) {
-        Map<String, String> systemProperties = new HashMap<String, String>();
-
-        for (ResourceConfig rs : config.getServerResources()) {
-            String type = rs.getType();
-            if (type == null || type.equalsIgnoreCase("system-property")) {
-                systemProperties.put(rs.getName(), rs.getValue());
-            }
-        }
-        for (ResourceConfig rs : config.getAppConfiguration().getResources()) {
-            String type = rs.getType();
-            if (type == null || type.equalsIgnoreCase("system-property")) {
-                systemProperties.put(rs.getName(), rs.getValue());
-            }
-        }
-        return systemProperties;
-    }
 }

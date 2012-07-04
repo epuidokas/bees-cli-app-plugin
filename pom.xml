@@ -34,7 +34,7 @@
 
     <scm>
       <developerConnection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</developerConnection>
-      <connection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-config-app.git</connection>
+      <connection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</connection>
     </scm>
 
 </project>
