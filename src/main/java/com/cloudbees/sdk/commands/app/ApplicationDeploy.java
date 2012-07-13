@@ -86,6 +86,8 @@ public class ApplicationDeploy extends Command {
 
     private Map<String, String> vars = new HashMap<String, String>();
 
+    private Map<String, String> runtimeParameters = new HashMap<String, String>();
+
     public ApplicationDeploy() {
     }
 
@@ -102,9 +104,10 @@ public class ApplicationDeploy extends Command {
         addOption( "e", "environment", true, "Environment configurations to deploy" );
         addOption( "d", "delta", true, "true to enable, false to disable delta upload (default: true)" );
         addOption( "b", "baseDir", true, "Base directory (default: '.')");
-        addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'src/main/conf/')");
+        addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'src/main/conf/')", true);
         addOption("t", "type", true, "deployment container type");
-        addOption( "P", null, true, "Config parameter name=value" );
+        addOption( "P", null, true, "Application config parameter name=value" );
+        addOption( "R", null, true, "Runtime config parameter name=value" );
 
         return true;
     }
@@ -194,6 +197,18 @@ public class ApplicationDeploy extends Command {
         }
     }
 
+    public Map<String, String> getRuntimeParameters() {
+        return runtimeParameters;
+    }
+
+    public void setR(String rt) {
+        rt = rt.trim();
+        int idx = isParameter(rt);
+        if (idx > -1) {
+            runtimeParameters.put(rt.substring(0, idx), rt.substring(idx + 1));
+        }
+    }
+
     @Override
     protected boolean execute() throws Exception {
 
@@ -269,7 +284,15 @@ public class ApplicationDeploy extends Command {
                 parameters.put(str.substring(0, idx), str.substring(idx+1));
         }
         if (parameters.size() > 0)
-            System.out.println("Deploy parameters: " + parameters);
+            System.out.println("Application parameters: " + parameters);
+
+        Map<String, String> rts = getRuntimeParameters();
+        if (rts.size() > 0) {
+            System.out.println("Runtime parameters: " + rts);
+            for (Map.Entry<String,String> entry : rts.entrySet()) {
+                parameters.put("runtime." + entry.getKey(), entry.getValue());
+            }
+        }
 
         Map<String, String> variables = getConfigVariables();
         if (variables.size() > 0)
