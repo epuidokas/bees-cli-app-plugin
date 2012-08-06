@@ -214,8 +214,6 @@ public class ApplicationRun extends Command {
         if (!staxWebXml.exists())
             staxWebXml = new File(webRoot, "WEB-INF/stax-web.xml");
 
-        StaxClient client = getStaxClient(StaxClient.class);
-
         appserverXML = new File("appserver.xml");
         if (!appserverXML.exists()) {
             appserverXML = new File(webRoot, "WEB-INF/cloudbees-appserver.xml");
@@ -227,6 +225,8 @@ public class ApplicationRun extends Command {
             System.out.println("Get application resources...");
             ApplicationResourceListResponse res = null;
             try {
+                StaxClient client = getStaxClient(StaxClient.class);
+
                 res = client.applicationResourceList(getAppId(null, null), null, null, environment);
 
                 if (res.getResources() != null && res.getResources().size() > 0) {
