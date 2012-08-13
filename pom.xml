@@ -9,7 +9,7 @@
 
   <groupId>org.cloudbees.sdk.plugins</groupId>
   <artifactId>app-plugin</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
