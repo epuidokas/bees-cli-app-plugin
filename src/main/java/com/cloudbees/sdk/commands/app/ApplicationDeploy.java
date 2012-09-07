@@ -299,12 +299,13 @@ public class ApplicationDeploy extends Command {
             System.out.println("Deploy variables: " + variables);
 
         String deployType;
-        if(deployFile.getName().endsWith(".war"))
-        {
+        if(deployFile.getName().endsWith(".war")) {
             deployType = "war";
-        }
-        else
-        {
+        } else if(deployFile.getName().endsWith(".zip")) {
+            deployType = "zip";
+        } else if(deployFile.getName().endsWith(".jar")) {
+            deployType = "jar";
+        } else {
             deployType = "ear";
             deployDelta = false;
         }
