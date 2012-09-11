@@ -93,7 +93,7 @@ public class ApplicationDeploy extends Command {
 
     @Override
     protected String getUsageMessage() {
-        return "WAR_file";
+        return "ARCHIVE_FILE | ARCHIVE_DIRECTORY";
     }
 
     @Override
@@ -230,15 +230,13 @@ public class ApplicationDeploy extends Command {
         }
         else
         {
-            // Experimental procfile support
-            if (warFile.exists() && warFile.isFile() && warFile.getName().equals("Procfile")) {
-                type = "procfile";
-                // zip the Procfile directory
-                deployFile = new File(warFile.getParentFile().getParent(), "procfile.zip");
+            if (warFile.isDirectory()) {
+                // zip the directory
+                deployFile = new File(warFile.getParent(), "deploy.zip");
                 FileOutputStream fileOutputStream = new FileOutputStream(deployFile);
                 ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
 
-                ZipHelper.addDirectoryToZip(warFile.getParentFile(), null, null, zipOutputStream);
+                ZipHelper.addDirectoryToZip(warFile, null, null, zipOutputStream);
 
                 close(zipOutputStream);
                 close(fileOutputStream);
