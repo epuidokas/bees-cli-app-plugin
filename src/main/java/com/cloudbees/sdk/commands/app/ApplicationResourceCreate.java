@@ -6,6 +6,7 @@ import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class ApplicationResourceCreate extends ApplicationResourceBase {
     }
 
     protected boolean bind() {
-        return bind == null ? true : Boolean.valueOf(bind);
+        return bind == null ? false : Boolean.valueOf(bind);
     }
 
     public void setBind(String bind) {
@@ -35,11 +36,21 @@ public class ApplicationResourceCreate extends ApplicationResourceBase {
     }
 
     @Override
+    public String getAccount() throws IOException {
+        if (getAppid() != null) {
+            String[] parts = getAppid().split("/");
+            setAccount(parts[0]);
+        }
+        return super.getAccount();
+    }
+
+    @Override
     protected boolean preParseCommandLine() {
         if(super.preParseCommandLine()) {
             removeOption("a");
-            addOption( "a", "appid", true, "CloudBees application ID" );
-            addOption( "bind", true, "bind resource, default: true" );
+            addOption("ac", "account", true, "CloudBees Account Name");
+            addOption( "a", "appid", true, "CloudBees Application ID" );
+            addOption( "bind", true, "bind resource, default: false" );
 
             return true;
         }
@@ -48,11 +59,11 @@ public class ApplicationResourceCreate extends ApplicationResourceBase {
 
     @Override
     protected boolean execute() throws Exception {
-        String appid = getAppId();
-
         StaxClient client = getStaxClient(StaxClient.class);
         ServiceResourceInfo resource = client.serviceResourceCreate(getServiceName(), getAccount(), getResourceType(), getParameterName(), getSettings());
         if (bind()) {
+            String appid = getAppId();
+
             ServiceResourceBindResponse res2 = client.resourceBind(getServiceName(), appid, resource.getService(), resource.getId(), resource.getId(), new HashMap<String, String>());
             if (isTextOutput()) {
                 System.out.println("Application - " + appid + " bound to " + resource.getId());

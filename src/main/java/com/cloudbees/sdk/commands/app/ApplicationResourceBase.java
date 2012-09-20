@@ -41,6 +41,10 @@ public abstract class ApplicationResourceBase extends ServiceBase {
         this.appid = appid;
     }
 
+    public String getAppid() {
+        return appid;
+    }
+
     public String getServiceName() {
         return serviceName;
     }
