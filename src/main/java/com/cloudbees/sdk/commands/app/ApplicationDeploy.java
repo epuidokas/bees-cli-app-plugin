@@ -105,7 +105,7 @@ public class ApplicationDeploy extends Command {
         addOption( "d", "delta", true, "true to enable, false to disable delta upload (default: true)" );
         addOption( "b", "baseDir", true, "Base directory (default: '.')");
         addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'src/main/conf/')", true);
-        addOption("t", "type", true, "deployment container type");
+        addOption("t", "type", true, "Application container type");
         addOption( "P", null, true, "Application config parameter name=value" );
         addOption( "R", null, true, "Runtime config parameter name=value" );
 

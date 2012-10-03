@@ -5,6 +5,7 @@ import com.cloudbees.api.ApplicationConfigUpdateResponse;
 import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
+import com.cloudbees.sdk.utils.Helper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.Map;
 @CLICommand("app:update")
 public class ApplicationConfigUpdate extends ApplicationBase {
     private Map<String, String> settings;
+    private Map<String, String> runtimeParameters = new HashMap<String, String>();
+    private String type;
+    private Boolean force;
 
     public ApplicationConfigUpdate() {
         super();
@@ -26,6 +30,26 @@ public class ApplicationConfigUpdate extends ApplicationBase {
 
     public Map<String, String> getSettings() {
         return settings;
+    }
+
+    public Map<String, String> getRuntimeParameters() {
+        return runtimeParameters;
+    }
+
+    public void setR(String rt) {
+        rt = rt.trim();
+        int idx = isParameter(rt);
+        if (idx > -1) {
+            runtimeParameters.put(rt.substring(0, idx), rt.substring(idx + 1));
+        }
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setForce(Boolean force) {
+        this.force = force;
     }
 
     /**
@@ -38,6 +62,17 @@ public class ApplicationConfigUpdate extends ApplicationBase {
     @Override
     protected String getUsageMessage() {
         return "APPLICATION_ID [parameterX=valueY]";
+    }
+
+    @Override
+    protected boolean preParseCommandLine() {
+        if (super.preParseCommandLine()) {
+            addOption( "f", "force", false, "force update without prompting" );
+            addOption("t", "type", true, "Application container type");
+            addOption( "R", null, true, "Runtime config parameter name=value" );
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -59,7 +94,26 @@ public class ApplicationConfigUpdate extends ApplicationBase {
     @Override
     protected boolean execute() throws Exception {
         String appId = getAppId();
+
+        if (force == null || !force.booleanValue()) {
+            if (!Helper.promptMatches("This command will restart your application, are you sure you want to update this application [" + appId + "]: (y/n) ", "[yY].*")) {
+                return true;
+            }
+        }
+
         StaxClient client = getStaxClient(StaxClient.class);
+
+        Map<String, String> rts = getRuntimeParameters();
+        if (rts.size() > 0) {
+//            System.out.println("Runtime parameters: " + rts);
+            for (Map.Entry<String,String> entry : rts.entrySet()) {
+                settings.put("runtime." + entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (type != null)
+            settings.put("containerType", type);
+
         ApplicationConfigUpdateResponse res = client.applicationConfigUpdate(appId, getSettings());
         if (isTextOutput()) {
             System.out.println("application - " + appId + " updated: " + res.getStatus());
