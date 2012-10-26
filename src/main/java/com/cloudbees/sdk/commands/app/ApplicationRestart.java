@@ -35,16 +35,6 @@ public class ApplicationRestart extends ApplicationBase {
     protected boolean execute() throws Exception {
         String appid = getAppId();
 
-        String defaultAppDomain = getConfigProperties().getProperty("bees.project.app.domain");
-        String[] appIdParts = appid.split("/");
-        if (appIdParts.length < 2) {
-            if (defaultAppDomain != null && !defaultAppDomain.equals("")) {
-                appid = defaultAppDomain + "/" + appid;
-            } else {
-                throw new RuntimeException("default app account could not be determined, appid needs to be fully-qualified ");
-            }
-        }
-
         if (force == null || !force.booleanValue()) {
             if (!Helper.promptMatches("Are you sure you want to restart this application [" + appid + "]: (y/n) ", "[yY].*")) {
                 return true;
