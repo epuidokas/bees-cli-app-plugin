@@ -1,5 +1,6 @@
 package com.cloudbees.sdk.commands.app;
 
+import com.cloudbees.api.ApplicationInstanceInfo;
 import com.cloudbees.api.ApplicationInstanceStatusResponse;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
@@ -57,12 +58,12 @@ public class ApplicationInstanceSet extends ApplicationInstanceBase {
         String instanceId = getInstanceId();
 
         AppClient client = getStaxClient(AppClient.class);
-        ApplicationInstanceStatusResponse res = client.applicationInstanceParametersUpdate(instanceId, parameters, isReset());
+        ApplicationInstanceInfo instanceInfo = client.applicationInstanceParametersUpdate(instanceId, parameters, isReset());
 
         if (isTextOutput()) {
-            System.out.println(String.format("instance [%s]: %s",instanceId, res.getStatus()));
+            ApplicationInstanceBase.printApplicationInstanceInfo(instanceInfo);
         } else
-            printOutput(res, ApplicationInstanceStatusResponse.class);
+            printOutput(instanceInfo, ApplicationInstanceInfo.class);
 
         return true;
     }

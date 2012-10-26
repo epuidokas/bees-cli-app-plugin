@@ -85,7 +85,7 @@ public class AppClient extends StaxClient {
         return apiResponse;
     }
 
-    public ApplicationInstanceStatusResponse applicationInstanceParametersUpdate(String instanceId, Map<String, String>parameters, boolean replace) throws Exception
+    public com.cloudbees.api.ApplicationInstanceInfo applicationInstanceParametersUpdate(String instanceId, Map<String, String>parameters, boolean replace) throws Exception
     {
         Map<String, String> params = new HashMap<String, String>();
         params.put("instance_id", instanceId);
@@ -98,8 +98,22 @@ public class AppClient extends StaxClient {
         trace("API call: " + url);
         String response = executeUpload(url, params, new HashMap<String, File>(), null);
         traceResponse(response);
-        ApplicationInstanceStatusResponse apiResponse =
-            (ApplicationInstanceStatusResponse)readResponse(response);
+        com.cloudbees.api.ApplicationInstanceInfo apiResponse =
+            (com.cloudbees.api.ApplicationInstanceInfo)readResponse(response);
+        return apiResponse;
+    }
+
+    public com.cloudbees.api.ApplicationInstanceInfo applicationInstanceInfo(String instanceId) throws Exception
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("instance_id", instanceId);
+
+        String url = getRequestURL("application.instance.info", params);
+        trace("API call: " + url);
+        String response = executeRequest(url);
+        traceResponse(response);
+        com.cloudbees.api.ApplicationInstanceInfo apiResponse =
+            (com.cloudbees.api.ApplicationInstanceInfo)readResponse(response);
         return apiResponse;
     }
 

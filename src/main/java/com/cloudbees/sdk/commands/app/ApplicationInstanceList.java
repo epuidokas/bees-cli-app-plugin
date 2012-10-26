@@ -28,28 +28,7 @@ public class ApplicationInstanceList extends ApplicationBase {
         ApplicationInstanceListResponse res = client.applicationInstanceList(getAppId());
         if (isTextOutput()) {
             for (ApplicationInstanceInfo instanceInfo : res.getInstances()) {
-                System.out.println( "Instance ID     : " + instanceInfo.getId());
-                Map<String, String> settings = instanceInfo.getSettings();
-                if (settings != null) {
-                    List<String> list = new ArrayList<String>(settings.size());
-                    for (Map.Entry<String, String> entry: settings.entrySet()) {
-                        list.add(Helper.getPaddedString(entry.getKey(), 16) + ": " + entry.getValue());
-                    }
-                    Collections.sort(list);
-                    for (String item : list)
-                        System.out.println(item);
-                }
-                Map<String, String> parameters = instanceInfo.getParameters();
-                if (parameters != null && parameters.size() > 0) {
-                    System.out.println( "Parameters");
-                    List<String> list = new ArrayList<String>(parameters.size());
-                    for (Map.Entry<String, String> entry: parameters.entrySet()) {
-                        list.add(Helper.getPaddedString("  " + entry.getKey(), 16) + ": " + entry.getValue());
-                    }
-                    Collections.sort(list);
-                    for (String item : list)
-                        System.out.println(item);
-                }
+                ApplicationInstanceBase.printApplicationInstanceInfo(instanceInfo);
                 System.out.println();
             }
         } else {
