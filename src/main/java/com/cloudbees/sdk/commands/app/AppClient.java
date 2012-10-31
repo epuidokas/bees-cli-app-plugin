@@ -4,6 +4,8 @@ import com.cloudbees.api.*;
 import com.thoughtworks.xstream.XStream;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,6 +133,23 @@ public class AppClient extends StaxClient {
         ApplicationInstanceInvokeResponse apiResponse =
             (ApplicationInstanceInvokeResponse)readResponse(response);
         return apiResponse;
+    }
+
+    public void applicationInstanceTailLog(String instanceId, String logName, OutputStream out) throws Exception
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("instance_id", instanceId);
+        params.put("log_name", logName);
+        String url = getRequestURL("tail", params, false);
+        trace("API call: " + url);
+        InputStream input = executeCometRequest(url);
+
+        byte[] bytes = new byte[1024];
+        int numRead = input.read(bytes);
+        while (numRead != -1) {
+            out.write(bytes, 0, numRead);
+            numRead = input.read(bytes);
+        }
     }
 
     protected XStream getXStream() throws Exception
