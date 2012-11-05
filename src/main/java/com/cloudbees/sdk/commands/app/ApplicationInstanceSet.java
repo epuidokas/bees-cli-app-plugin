@@ -38,6 +38,12 @@ public class ApplicationInstanceSet extends ApplicationInstanceBase {
     }
 
     @Override
+    protected String getUsageMessage() {
+        return "INSTANCE_ID [name=value]";
+    }
+
+
+    @Override
     protected boolean postParseCommandLine() {
         if (super.postParseCommandLine()) {
             List otherArgs = getCommandLine().getArgList();

@@ -32,7 +32,7 @@ public abstract class  ApplicationBase extends Command {
     @Override
     protected boolean preParseCommandLine() {
         // add the Options
-        addOption( "a", "appid", true, "CloudBees application ID", true );
+        addOption( "a", "appid", true, "CloudBees application ID" );
 
         return true;
     }
