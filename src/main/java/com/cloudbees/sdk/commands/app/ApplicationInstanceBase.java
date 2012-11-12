@@ -93,7 +93,7 @@ public abstract class ApplicationInstanceBase extends Command {
         }
         Map<String, String> parameters = instanceInfo.getParameters();
         if (parameters != null && parameters.size() > 0) {
-            System.out.println( "Parameters");
+            System.out.println( "Tags");
             List<String> list = new ArrayList<String>(parameters.size());
             for (Map.Entry<String, String> entry: parameters.entrySet()) {
                 list.add(Helper.getPaddedString("  " + entry.getKey(), 16) + ": " + entry.getValue());

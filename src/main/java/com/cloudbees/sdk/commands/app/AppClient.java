@@ -87,16 +87,16 @@ public class AppClient extends StaxClient {
         return apiResponse;
     }
 
-    public com.cloudbees.api.ApplicationInstanceInfo applicationInstanceParametersUpdate(String instanceId, Map<String, String>parameters, boolean replace) throws Exception
+    public com.cloudbees.api.ApplicationInstanceInfo applicationInstanceTagsUpdate(String instanceId, Map<String, String> tags, boolean replace) throws Exception
     {
         Map<String, String> params = new HashMap<String, String>();
         params.put("instance_id", instanceId);
         params.put("reset", Boolean.toString(replace));
-        params.put("parameters", createParameter(parameters));
+        params.put("parameters", createParameter(tags));
 
         String url = getApiUrl("application.instance.update").toString();
         params.put("action", "application.instance.update");
-        // use the upload method (POST) to handle the potentially large parameters payload
+        // use the upload method (POST) to handle the potentially large tags payload
         trace("API call: " + url);
         String response = executeUpload(url, params, new HashMap<String, File>(), null);
         traceResponse(response);

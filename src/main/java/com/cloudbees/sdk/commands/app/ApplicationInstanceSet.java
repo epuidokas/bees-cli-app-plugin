@@ -1,7 +1,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ApplicationInstanceInfo;
-import com.cloudbees.api.ApplicationInstanceStatusResponse;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
@@ -12,7 +11,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Set application instance parameters")
+@BeesCommand(group="Application", description = "Set application instance tags")
 @CLICommand("app:instance:set")
 public class ApplicationInstanceSet extends ApplicationInstanceBase {
     private Map<String, String> parameters = new HashMap<String, String>();
@@ -31,7 +30,7 @@ public class ApplicationInstanceSet extends ApplicationInstanceBase {
     }
     protected boolean preParseCommandLine() {
         if (super.preParseCommandLine()) {
-            addOption( null, "reset", false, "Reset current parameters with specified ones. By default parameters are added" );
+            addOption( null, "reset", false, "Reset current tags with specified ones. By default tags are added" );
             return true;
         }
         return false;
@@ -64,7 +63,7 @@ public class ApplicationInstanceSet extends ApplicationInstanceBase {
         String instanceId = getInstanceId();
 
         AppClient client = getStaxClient(AppClient.class);
-        ApplicationInstanceInfo instanceInfo = client.applicationInstanceParametersUpdate(instanceId, parameters, isReset());
+        ApplicationInstanceInfo instanceInfo = client.applicationInstanceTagsUpdate(instanceId, parameters, isReset());
 
         if (isTextOutput()) {
             ApplicationInstanceBase.printApplicationInstanceInfo(instanceInfo);
