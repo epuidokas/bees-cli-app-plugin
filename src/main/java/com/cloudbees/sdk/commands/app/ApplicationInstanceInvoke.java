@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Invoke a specific application instance control script")
+@BeesCommand(group="Application", description = "Invoke an application instance control script")
 @CLICommand("app:instance:invoke")
 public class ApplicationInstanceInvoke extends ApplicationInstanceBase {
     private String script;

@@ -8,7 +8,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Restart a specific application instance")
+@BeesCommand(group="Application", description = "Restart an application instance")
 @CLICommand("app:instance:restart")
 public class ApplicationInstanceRestart extends ApplicationInstanceBase {
     private Boolean force;

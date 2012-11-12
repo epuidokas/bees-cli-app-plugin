@@ -8,7 +8,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Re-deploy a specific application instance")
+@BeesCommand(group="Application", description = "Re-deploy an application instance")
 @CLICommand("app:instance:replace")
 public class ApplicationInstanceReplace extends ApplicationInstanceBase {
     private Boolean force;

@@ -8,7 +8,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Delete a specific application instance")
+@BeesCommand(group="Application", description = "Delete an application instance")
 @CLICommand("app:instance:delete")
 public class ApplicationInstanceDelete extends ApplicationInstanceBase {
     private Boolean force;
