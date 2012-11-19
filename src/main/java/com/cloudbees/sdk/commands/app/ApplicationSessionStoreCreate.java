@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Create a session-store resource")
 @CLICommand("app:session-store:create")
 public class ApplicationSessionStoreCreate extends ApplicationResourceCreate {
     private String size;

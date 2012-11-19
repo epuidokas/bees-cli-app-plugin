@@ -35,7 +35,7 @@ import java.util.zip.ZipFile;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Run an application locally")
 @CLICommand("app:run")
 public class ApplicationRun extends Command {
 

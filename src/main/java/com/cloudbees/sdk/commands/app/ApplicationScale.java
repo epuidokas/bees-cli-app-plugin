@@ -8,7 +8,7 @@ import com.cloudbees.sdk.cli.CLICommand;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Scale an application up or down")
 @CLICommand("app:scale")
 public class ApplicationScale extends ApplicationBase {
     private String up;

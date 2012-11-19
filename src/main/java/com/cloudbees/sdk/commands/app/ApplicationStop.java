@@ -9,7 +9,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Stop an application")
 @CLICommand("app:stop")
 public class ApplicationStop extends ApplicationBase {
     private Boolean force;

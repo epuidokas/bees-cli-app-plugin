@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Create a new application resource")
 @CLICommand("app:resource:create")
 public class ApplicationResourceCreate extends ApplicationResourceBase {
     private String bind;

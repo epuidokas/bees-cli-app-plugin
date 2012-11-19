@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  *
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Update an application configuration parameters")
 @CLICommand("app:update")
 public class ApplicationConfigUpdate extends ApplicationBase {
     private Map<String, String> settings;

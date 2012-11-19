@@ -9,7 +9,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Delete an application")
 @CLICommand("app:delete")
 public class ApplicationDelete extends ApplicationBase {
     private Boolean force;

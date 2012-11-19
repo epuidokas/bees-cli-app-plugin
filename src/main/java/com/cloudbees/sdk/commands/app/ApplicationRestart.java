@@ -9,7 +9,7 @@ import com.cloudbees.sdk.utils.Helper;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Restart/redeploy an application")
 @CLICommand("app:restart")
 public class ApplicationRestart extends ApplicationBase {
     private Boolean force;

@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Unbind an application resource")
 @CLICommand("app:unbind")
 public class ApplicationUnBind extends ServiceBase {
     /**

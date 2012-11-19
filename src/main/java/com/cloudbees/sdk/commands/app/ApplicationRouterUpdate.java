@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Update a router resource configuration")
 @CLICommand("app:router:update")
 public class ApplicationRouterUpdate extends ApplicationResourceBase {
     private String certificate;

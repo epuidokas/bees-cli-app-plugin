@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  *
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "List application resources")
 @CLICommand("app:resource:list")
 public class ApplicationResourceList extends ApplicationResourceBase {
     private String type;

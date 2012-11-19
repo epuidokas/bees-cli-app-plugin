@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Create a router resource")
 @CLICommand("app:router:create")
 public class ApplicationRouterCreate extends ApplicationResourceCreate {
     private String certificate;

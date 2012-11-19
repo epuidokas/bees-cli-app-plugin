@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Validate a router SSL certificate")
 @CLICommand("app:cert:validate")
 public class ApplicationSSLCertValidate extends ServiceBase {
     private String certificate;

@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Get an application configuration")
 @CLICommand("app:info")
 public class ApplicationInfo extends ApplicationBase {
 

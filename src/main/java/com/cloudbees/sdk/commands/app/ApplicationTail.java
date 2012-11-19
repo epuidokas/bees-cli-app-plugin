@@ -8,7 +8,7 @@ import com.cloudbees.sdk.cli.CLICommand;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Tail the logs of an application")
 @CLICommand("app:tail")
 public class ApplicationTail extends ApplicationBase {
 

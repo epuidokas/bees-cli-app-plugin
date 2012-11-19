@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Create a new application")
 @CLICommand("app:create")
 public class ApplicationCreate extends ApplicationBase {
     private Boolean withCD;

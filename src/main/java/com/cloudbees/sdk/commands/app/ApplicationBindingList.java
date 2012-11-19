@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "List resources bound to an application")
 @CLICommand("app:bindings")
 public class ApplicationBindingList extends ApplicationBase {
 

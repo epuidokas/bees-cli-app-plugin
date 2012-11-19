@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Bind a resource to an application")
 @CLICommand("app:bind")
 public class ApplicationBind extends ServiceBase {
     /**

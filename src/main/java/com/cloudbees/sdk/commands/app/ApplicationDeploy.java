@@ -24,7 +24,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application")
+@BeesCommand(group="Application", description = "Deploy an application")
 @CLICommand("app:deploy")
 public class ApplicationDeploy extends Command {
     /**
