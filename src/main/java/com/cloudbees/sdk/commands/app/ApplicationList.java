@@ -8,6 +8,9 @@ import com.cloudbees.sdk.commands.Command;
 import com.cloudbees.sdk.utils.Helper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,14 +53,18 @@ public class ApplicationList extends Command {
         if (isTextOutput()) {
             System.out.println("Application                Status    URL                           Instance(s)");
             System.out.println();
+            List<String> list = new ArrayList<String>();
             for (com.cloudbees.api.ApplicationInfo applicationInfo: res.getApplications()) {
                 String msg = s(applicationInfo.getId(), 26)+ " " + s(applicationInfo.getStatus(), 10) + s(applicationInfo.getUrls()[0], 38);
                 Map<String, String> settings = applicationInfo.getSettings();
                 if (settings != null) {
                     msg += " " + settings.get("clusterSize");
                 }
-                System.out.println(msg);
+                list.add(msg);
             }
+            Collections.sort(list);
+            for (String app: list)
+                System.out.println(app);
         } else {
             printOutput(res, ApplicationInfo.class, ApplicationListResponse.class);
         }
