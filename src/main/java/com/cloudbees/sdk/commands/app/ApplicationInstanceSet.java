@@ -62,7 +62,7 @@ public class ApplicationInstanceSet extends ApplicationInstanceBase {
     protected boolean execute() throws Exception {
         String instanceId = getInstanceId();
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceInfo instanceInfo = client.applicationInstanceTagsUpdate(instanceId, parameters, isReset());
 
         if (isTextOutput()) {

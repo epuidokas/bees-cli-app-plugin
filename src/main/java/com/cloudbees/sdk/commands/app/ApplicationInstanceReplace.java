@@ -39,7 +39,7 @@ public class ApplicationInstanceReplace extends ApplicationInstanceBase {
             }
         }
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceStatusResponse res = client.applicationInstanceReplace(instanceId);
 
         if (isTextOutput()) {

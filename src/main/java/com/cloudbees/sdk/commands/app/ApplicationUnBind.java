@@ -49,7 +49,7 @@ public class ApplicationUnBind extends ServiceBase {
     protected boolean execute() throws Exception {
         initAppId();
 
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
         ServiceResourceUnBindResponse res = client.resourceUnBind("cb-app", getAppid(), getAlias());
         if (isTextOutput()) {
 //            System.out.println("Message: " + res.getMessage());

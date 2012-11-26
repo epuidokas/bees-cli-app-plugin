@@ -39,7 +39,7 @@ public class ApplicationInstanceRestart extends ApplicationInstanceBase {
             }
         }
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceStatusResponse res = client.applicationInstanceRestart(instanceId);
 
         if (isTextOutput()) {

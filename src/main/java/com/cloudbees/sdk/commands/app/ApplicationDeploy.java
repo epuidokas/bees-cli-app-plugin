@@ -266,7 +266,7 @@ public class ApplicationDeploy extends Command {
         environment = StringHelper.join(appConfig.getAppliedEnvironments().toArray(new String[0]), ",");
 
         System.out.println(String.format("Deploying application %s (environment: %s): %s", appid, environment, deployFile));
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
 
         boolean deployDelta = (delta == null || delta.equalsIgnoreCase("true")) ? true : false;
 

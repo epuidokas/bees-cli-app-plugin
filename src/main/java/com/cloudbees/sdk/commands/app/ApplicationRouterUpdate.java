@@ -84,7 +84,7 @@ public class ApplicationRouterUpdate extends ApplicationResourceBase {
         String[] parts = resourceId.split("/");
         if (parts.length == 1)
             resourceId = getAccount() + "/" + resourceId;
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
         ServiceResourceInfo resource = client.serviceResourceUpdate(getServiceName(), resourceId, getSettings());
         if (isTextOutput()) {
             System.out.println("Resource: " + resource.getId());

@@ -47,7 +47,7 @@ public class ApplicationList extends Command {
 
     @Override
     protected boolean execute() throws Exception {
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
         ApplicationListResponse res = client.applicationList(getAccount());
 
         if (isTextOutput()) {

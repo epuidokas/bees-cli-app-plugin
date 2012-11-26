@@ -160,7 +160,7 @@ public class ApplicationCreate extends ApplicationBase {
             parameters.put("app_type", getType());
         }
 
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
 
         ApplicationCreateResponse res = client.applicationCreate(appid, parameters);
         if (isTextOutput()) {

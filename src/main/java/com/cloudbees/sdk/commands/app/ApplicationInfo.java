@@ -23,7 +23,7 @@ public class ApplicationInfo extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
         com.cloudbees.api.ApplicationInfo res = client.applicationInfo(getAppId());
         if (isTextOutput()) {
             System.out.println( "Application     : " + res.getId());

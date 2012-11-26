@@ -24,7 +24,7 @@ public class ApplicationInstanceList extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceListResponse res = client.applicationInstanceList(getAppId());
         if (isTextOutput()) {
             for (ApplicationInstanceInfo instanceInfo : res.getInstances()) {

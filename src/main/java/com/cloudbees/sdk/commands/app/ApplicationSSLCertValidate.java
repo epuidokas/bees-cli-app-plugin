@@ -67,7 +67,7 @@ public class ApplicationSSLCertValidate extends ServiceBase {
         if (!new File(getPrivateKey()).exists()) {
             throw new IllegalArgumentException("Private key file not found: " + getPrivateKey());
         }
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
         ServiceSubscriptionInvokeInfo invokeInfo = client.serviceSubscriptionInvoke("cb-app", getAccount(), "validate_ssl_cert", settings);
         System.out.println(invokeInfo.getMessage());
         return true;

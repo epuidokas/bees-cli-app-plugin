@@ -18,7 +18,7 @@ public class ApplicationInstanceTail extends ApplicationInstanceBase {
     protected boolean execute() throws Exception {
         String instanceId = getInstanceId();
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         client.applicationInstanceTailLog(instanceId, "server", System.out);
 
         return true;

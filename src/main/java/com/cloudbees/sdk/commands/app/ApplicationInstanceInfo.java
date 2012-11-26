@@ -18,7 +18,7 @@ public class ApplicationInstanceInfo extends ApplicationInstanceBase {
     protected boolean execute() throws Exception {
         String instanceId = getInstanceId();
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         com.cloudbees.api.ApplicationInstanceInfo instanceInfo = client.applicationInstanceInfo(instanceId);
 
         if (isTextOutput()) {

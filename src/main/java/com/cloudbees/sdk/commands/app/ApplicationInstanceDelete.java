@@ -39,7 +39,7 @@ public class ApplicationInstanceDelete extends ApplicationInstanceBase {
             }
         }
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceStatusResponse res = client.applicationInstanceDelete(instanceId);
 
         if (isTextOutput()) {

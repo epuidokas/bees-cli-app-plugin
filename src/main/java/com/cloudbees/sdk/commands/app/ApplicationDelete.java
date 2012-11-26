@@ -42,7 +42,7 @@ public class ApplicationDelete extends ApplicationBase {
             }
         }
 
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
         ApplicationDeleteResponse res = client.applicationDelete(appid);
 
         if (isTextOutput()) {

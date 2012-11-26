@@ -50,7 +50,7 @@ public class ApplicationStop extends ApplicationBase {
             }
         }
 
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
         ApplicationStatusResponse res = client.applicationStop(appid);
 
         if (isTextOutput()) {

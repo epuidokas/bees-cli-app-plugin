@@ -225,7 +225,7 @@ public class ApplicationRun extends Command {
             System.out.println("Get application resources...");
             ApplicationResourceListResponse res = null;
             try {
-                StaxClient client = getStaxClient(StaxClient.class);
+                StaxClient client = getBeesClient(StaxClient.class);
 
                 res = client.applicationResourceList(getAppId(null, null), null, null, environment);
 

@@ -40,7 +40,7 @@ public class ApplicationHibernate extends ApplicationBase {
             }
         }
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationStatusResponse res = client.applicationHibernate(appid);
 
         if (isTextOutput()) {

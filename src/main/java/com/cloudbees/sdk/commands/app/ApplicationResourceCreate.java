@@ -59,7 +59,7 @@ public class ApplicationResourceCreate extends ApplicationResourceBase {
 
     @Override
     protected boolean execute() throws Exception {
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
         ServiceResourceInfo resource = client.serviceResourceCreate(getServiceName(), getAccount(), getResourceType(), getParameterName(), getSettings());
         if (bind()) {
             String appid = getAppId();

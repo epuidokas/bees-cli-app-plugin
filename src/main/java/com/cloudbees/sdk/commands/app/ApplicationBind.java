@@ -118,7 +118,7 @@ public class ApplicationBind extends ServiceBase {
         // force resourceId input if not specified
         getResourceId();
 
-        StaxClient client = getStaxClient(StaxClient.class);
+        StaxClient client = getBeesClient(StaxClient.class);
         ServiceResourceBindResponse res = client.resourceBind("cb-app", getAppid(), getServiceName(), getResourceId(), getAlias(), getSettings());
         if (isTextOutput()) {
 //            System.out.println("Message: " + res.getMessage());

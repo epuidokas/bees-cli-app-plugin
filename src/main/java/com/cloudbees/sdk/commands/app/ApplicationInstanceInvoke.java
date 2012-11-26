@@ -60,7 +60,7 @@ public class ApplicationInstanceInvoke extends ApplicationInstanceBase {
         if (args != null)
             parameters.put("args", args);
 
-        AppClient client = getStaxClient(AppClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceInvokeResponse res = client.applicationInstanceInvoke(instanceId, getScript(), parameters);
 
         if (isTextOutput()) {

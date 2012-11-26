@@ -47,7 +47,7 @@ public class ApplicationGetSource extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        BeesClient client = getBeesClient();
+        BeesClient client = getBeesClient(BeesClient.class);
         ApplicationGetSourceUrlResponse res = client.applicationGetSourceUrl(getAppId());
 
         if (res.getUrl() != null) {
