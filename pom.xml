@@ -9,7 +9,7 @@
 
   <groupId>org.cloudbees.sdk.plugins</groupId>
   <artifactId>app-plugin</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -59,7 +59,7 @@
     <scm>
       <developerConnection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</developerConnection>
       <connection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</connection>
-      <tag>app-plugin-1.4.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
 </project>
