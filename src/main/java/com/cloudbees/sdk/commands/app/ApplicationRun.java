@@ -278,7 +278,7 @@ public class ApplicationRun extends Command {
 
     private String[] getEnvironments(File staxappxmlFile, String envString)
     {
-        if(envString == null || envString.equals("") && staxappxmlFile != null && staxappxmlFile.exists())
+        if ((envString == null || envString.equals("")) && staxappxmlFile != null && staxappxmlFile.exists())
         {
             //load the default environment, and append the run environment
             AppConfig appConfig = new AppConfig();
