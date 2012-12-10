@@ -137,7 +137,7 @@ public class ApplicationDeploy extends Command {
     }
 
 
-    protected void setAppConfig(File appConfig) {
+    public void setAppConfig(File appConfig) {
         this.appConfig = appConfig;
     }
 
@@ -153,7 +153,7 @@ public class ApplicationDeploy extends Command {
         return baseDir;
     }
 
-    protected void setWarFile(File warFile) {
+    public void setWarFile(File warFile) {
         this.warFile = warFile;
     }
 
