@@ -193,8 +193,12 @@ public class ApplicationDeploy extends Command {
         var = var.trim();
         int idx = isParameter(var);
         if (idx > -1) {
-            vars.put(var.substring(0, idx), var.substring(idx+1));
+            addConfigVariable(var.substring(0, idx), var.substring(idx+1));
         }
+    }
+
+    public String addConfigVariable(String name, String value) {
+        return vars.put(name, value);
     }
 
     public Map<String, String> getRuntimeParameters() {
@@ -205,8 +209,12 @@ public class ApplicationDeploy extends Command {
         rt = rt.trim();
         int idx = isParameter(rt);
         if (idx > -1) {
-            runtimeParameters.put(rt.substring(0, idx), rt.substring(idx + 1));
+            addRuntimeParameter(rt.substring(0, idx), rt.substring(idx + 1));
         }
+    }
+
+    public void addRuntimeParameter(String name, String value) {
+        runtimeParameters.put(name, value);
     }
 
     @Override
