@@ -152,7 +152,7 @@ public class ApplicationRun extends Command {
         this.tmpDir = tmpDir;
     }
 
-    protected void setWarFile(File warFile) {
+    public void setWarFile(File warFile) {
         this.warFile = warFile;
     }
 
