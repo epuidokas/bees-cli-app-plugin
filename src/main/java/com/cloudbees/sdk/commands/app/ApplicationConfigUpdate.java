@@ -20,6 +20,7 @@ public class ApplicationConfigUpdate extends ApplicationBase {
     private Map<String, String> settings;
     private Map<String, String> runtimeParameters = new HashMap<String, String>();
     private String type;
+    private String snapshot;
     private Boolean force;
 
     public ApplicationConfigUpdate() {
@@ -48,6 +49,10 @@ public class ApplicationConfigUpdate extends ApplicationBase {
         this.type = type;
     }
 
+    public void setSnapshot(String snapshot) {
+        this.snapshot = snapshot;
+    }
+
     public void setForce(Boolean force) {
         this.force = force;
     }
@@ -69,6 +74,7 @@ public class ApplicationConfigUpdate extends ApplicationBase {
         if (super.preParseCommandLine()) {
             addOption( "f", "force", false, "force update without prompting" );
             addOption("t", "type", true, "Application container type");
+            addOption("ss", "snapshot", true, "Application active snapshot");
             addOption( "R", null, true, "Runtime config parameter name=value" );
             return true;
         }
@@ -113,6 +119,8 @@ public class ApplicationConfigUpdate extends ApplicationBase {
 
         if (type != null)
             settings.put("containerType", type);
+        if (snapshot != null)
+            settings.put("snapshot", snapshot);
 
         ApplicationConfigUpdateResponse res = client.applicationConfigUpdate(appId, getSettings());
         if (isTextOutput()) {

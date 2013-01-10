@@ -38,8 +38,8 @@ public class ApplicationScale extends ApplicationBase {
     @Override
     protected boolean preParseCommandLine() {
         if(super.preParseCommandLine()) {
-            addOption( "up", true, "scale up");
-            addOption( "down", true, "scale down" );
+            addOption( "up", true, "scale up by");
+            addOption( "down", true, "scale down by" );
 
             return true;
         }
