@@ -45,7 +45,8 @@ public class ApplicationResourceList extends ApplicationResourceBase {
         List<ServiceResourceInfo> resources = new ArrayList<ServiceResourceInfo>();
         for (ServiceResourceInfo resource: res.getResources()) {
             if (resource.getResourceType() != null && !resource.getResourceType().equalsIgnoreCase("application")) {
-                resources.add(resource);
+                if (getType() == null || resource.getResourceType().equalsIgnoreCase(getType()))
+                    resources.add(resource);
             }
         }
         res.setResources(resources);
