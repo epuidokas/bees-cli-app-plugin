@@ -205,6 +205,20 @@ public class AppClient extends StaxClient {
         return apiResponse;
     }
 
+    public ApplicationStatusResponse applicationProxyUpdate(String appId, Map<String, String> parameters) throws Exception
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("app_id", appId);
+        params.put("parameters", createParameter(parameters));
+        String url = getRequestURL("application.proxy.update", params);
+        trace("API call: " + url);
+        String response = executeRequest(url);
+        traceResponse(response);
+        ApplicationStatusResponse apiResponse =
+            (ApplicationStatusResponse)readResponse(response);
+        return apiResponse;
+    }
+
     protected XStream getXStream() throws Exception
     {
         XStream xstream = super.getXStream();
