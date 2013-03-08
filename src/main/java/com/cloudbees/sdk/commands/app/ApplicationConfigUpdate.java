@@ -25,7 +25,7 @@ public class ApplicationConfigUpdate extends ApplicationBase {
 
     public ApplicationConfigUpdate() {
         super();
-        setArgumentExpected(1);
+        setArgumentExpected(0);
         settings = new HashMap<String, String>();
     }
 
