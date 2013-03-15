@@ -1,10 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.cloudbees.sdk</groupId>
-    <artifactId>bees-cli-parent</artifactId>
-    <version>1.3.0</version>
+    <groupId>com.cloudbees</groupId>
+    <artifactId>cloudbees-oss-parent</artifactId>
+    <version>2</version>
   </parent>
 
   <groupId>org.cloudbees.sdk.plugins</groupId>
@@ -30,7 +29,7 @@
     <dependency>
       <groupId>com.cloudbees.sdk</groupId>
       <artifactId>bees-driver</artifactId>
-      <version>${project.parent.version}</version>
+      <version>1.3.0</version>
       <scope>provided</scope>
     </dependency>
       <dependency>
@@ -58,10 +57,18 @@
       </dependency>
   </dependencies>
 
-    <scm>
-      <developerConnection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</developerConnection>
-      <connection>scm:git:ssh://git@git.cloudbees.com/cloudbees/bees-cli-app-plugin.git</connection>
-      <tag>HEAD</tag>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/cloudbees/bees-cli-${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:cloudbees/bees-cli-${project.artifactId}.git</developerConnection>
+    <url>http://github.com/cloudbees/bees-cli-${project.artifactId}</url>
   </scm>
 
 </project>
