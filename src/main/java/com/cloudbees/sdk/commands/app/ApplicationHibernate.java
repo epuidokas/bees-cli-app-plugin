@@ -56,7 +56,7 @@ public class ApplicationHibernate extends ApplicationBase {
             }
         }
 
-        AppClient client = getBeesClient(AppClient.class);
+        AppClient client = getAppClient(appid);
         ApplicationStatusResponse res = client.applicationHibernate(appid);
 
         if (isTextOutput()) {

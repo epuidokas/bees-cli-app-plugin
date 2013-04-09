@@ -19,13 +19,11 @@ package com.cloudbees.sdk.commands.app;
 import com.cloudbees.api.ApplicationResourceListResponse;
 import com.cloudbees.api.ParameterSettingsInfo;
 import com.cloudbees.api.ResourceSettingsInfo;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.CommandServiceImpl;
 import com.cloudbees.sdk.Plugin;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.cli.CommandService;
-import com.cloudbees.sdk.commands.Command;
 import com.cloudbees.sdk.utils.Helper;
 import com.cloudbees.utils.ZipHelper;
 import com.staxnet.appserver.config.AppConfig;
@@ -53,7 +51,7 @@ import java.util.zip.ZipFile;
  */
 @BeesCommand(group="Application", description = "Run an application locally")
 @CLICommand("app:run")
-public class ApplicationRun extends Command {
+public class ApplicationRun extends ApplicationBase {
 
     @Inject
     private CommandService commandService;
@@ -83,7 +81,6 @@ public class ApplicationRun extends Command {
     private File warFile;
 
     private Boolean noResourceFetch;
-    private String appid;
     private String account;
 
     private Thread server;
@@ -100,22 +97,8 @@ public class ApplicationRun extends Command {
         this.noResourceFetch = noResourceFetch;
     }
 
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    public String getAppid() {
-        return appid;
-    }
-
     private String getDefaultDomain() {
         return getConfigProperties().getProperty("bees.project.app.domain");
-    }
-
-    public String getAccount() throws IOException {
-        if (account == null) account = getDefaultDomain();
-        if (account == null) account = Helper.promptFor("Account name: ", true);
-        return account;
     }
 
     @Override
@@ -125,24 +108,23 @@ public class ApplicationRun extends Command {
 
     @Override
     protected boolean preParseCommandLine() {
+        if (super.preParseCommandLine()) {
         // add the Options
-        addOption("a", "appid", true, "Resources application ID");
-        addOption(null, "port", true, "server listen port (default: 8080)");
-        addOption("e", "environment", true, "Environment configurations to run");
-        addOption("t", "tmpDir", true, "Local working directory where temp files can be created (default: 'temp')");
-        addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'conf')", true);
-        addOption(null, "noResourceFetch", false, "do not fetch application resources");
+            addOption(null, "port", true, "server listen port (default: 8080)");
+            addOption("e", "environment", true, "Environment configurations to run");
+            addOption("t", "tmpDir", true, "Local working directory where temp files can be created (default: 'temp')");
+            addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'conf')", true);
+            addOption(null, "noResourceFetch", false, "do not fetch application resources");
 
-        return true;
-    }
-
-    @Override
-    protected boolean postParseCheck() {
-        if (super.postParseCheck()) {
-            setWarFile(new File(getParameters().get(0)));
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected boolean postParseParameters() {
+        setWarFile(new File(getParameters().get(0)));
+        return true;
     }
 
     @Override
@@ -197,6 +179,7 @@ public class ApplicationRun extends Command {
     }
 
     boolean cleanWebRoot = false;
+    boolean deleteAppserverXML = false;
     File webRoot = null;
     File appserverXML;
 
@@ -232,18 +215,22 @@ public class ApplicationRun extends Command {
 
         appserverXML = new File("appserver.xml");
         if (!appserverXML.exists()) {
-            appserverXML = new File(webRoot, "WEB-INF/cloudbees-appserver.xml");
-            if (appserverXML.exists()) appserverXML.delete();
+            appserverXML = new File(getDescriptorDir(), "appserver.xml");
+            if (!appserverXML.exists()) {
+                appserverXML = new File(webRoot, "WEB-INF/cloudbees-appserver.xml");
+                if (appserverXML.exists()) appserverXML.delete();
+            }
         }
 
         // Create the appserver.xml
+        String appid = getAppid();
         if (fetchResources() && appid != null) {
             System.out.println("Get application resources...");
             ApplicationResourceListResponse res = null;
             try {
-                StaxClient client = getBeesClient(StaxClient.class);
+                AppClient client = getAppClient(appid);
 
-                res = client.applicationResourceList(getAppId(null, null), null, null, environment);
+                res = client.applicationResourceList(getAppId(appid, null, null), null, null, environment);
 
                 if (res.getResources() != null && res.getResources().size() > 0) {
                     // Generate appserver.xml file
@@ -256,6 +243,7 @@ public class ApplicationRun extends Command {
                         xstream.alias("appserver", ApplicationResourceListResponse.class);
                         xstream.addImplicitCollection(ApplicationResourceListResponse.class, "resources");
                         xstream.toXML(res, fos);
+                        deleteAppserverXML = true;
                     } finally {
                         if (fos != null)
                             fos.close();
@@ -307,7 +295,7 @@ public class ApplicationRun extends Command {
         return environment;
     }
 
-    protected String getAppId(File configFile, String[] environments) throws IOException
+    protected String getAppId(String appid, File configFile, String[] environments) throws IOException
     {
         if ((appid == null || appid.equals("")) && configFile != null && configFile.exists()) {
             FileInputStream fis = new FileInputStream(configFile);
@@ -334,7 +322,7 @@ public class ApplicationRun extends Command {
     public void stop() {
         if (server != null) server.interrupt();
         if (cleanWebRoot) Helper.deleteDirectory(webRoot);
-        if (appserverXML.exists())
+        if (deleteAppserverXML && appserverXML.exists())
             appserverXML.delete();
     }
 

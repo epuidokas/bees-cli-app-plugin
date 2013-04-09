@@ -40,8 +40,9 @@ public class ApplicationInstanceList extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        AppClient client = getBeesClient(AppClient.class);
-        ApplicationInstanceListResponse res = client.applicationInstanceList(getAppId());
+        String appid = getAppId();
+        AppClient client = getAppClient(appid);
+        ApplicationInstanceListResponse res = client.applicationInstanceList(appid);
         if (isTextOutput()) {
             for (ApplicationInstanceInfo instanceInfo : res.getInstances()) {
                 ApplicationInstanceBase.printApplicationInstanceInfo(instanceInfo);

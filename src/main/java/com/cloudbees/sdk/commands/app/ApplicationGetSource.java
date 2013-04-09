@@ -63,11 +63,12 @@ public class ApplicationGetSource extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        BeesClient client = getBeesClient(BeesClient.class);
-        ApplicationGetSourceUrlResponse res = client.applicationGetSourceUrl(getAppId());
+        String appid = getAppId();
+        AppClient client = getAppClient(appid);
+        ApplicationGetSourceUrlResponse res = client.applicationGetSourceUrl(appid);
 
         if (res.getUrl() != null) {
-            String[] parts = getAppId().split("/");
+            String[] parts = appid.split("/");
             File dirName = new File(getDir(), parts[1]);
             if (force == null || !force.booleanValue()) {
                 if (dirName.exists() && dirName.list().length > 0) {

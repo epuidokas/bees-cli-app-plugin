@@ -34,8 +34,9 @@ public class ApplicationSnapshotList extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        AppClient client = getBeesClient(AppClient.class);
-        ApplicationSnapshotListResponse res = client.applicationSnapshotList(getAppId());
+        String appid = getAppId();
+        AppClient client = getAppClient(appid);
+        ApplicationSnapshotListResponse res = client.applicationSnapshotList(appid);
         if (isTextOutput()) {
             for (ApplicationSnapshotInfo snapshotInfo : res.getSnapshots()) {
                 ApplicationSnapshotBase.printApplicationSnapshotInfo(snapshotInfo);

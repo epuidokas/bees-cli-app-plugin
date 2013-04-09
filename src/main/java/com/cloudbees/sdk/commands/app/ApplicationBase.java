@@ -16,9 +16,13 @@
 
 package com.cloudbees.sdk.commands.app;
 
+import com.cloudbees.api.*;
 import com.cloudbees.sdk.commands.Command;
+import com.cloudbees.sdk.commands.app.model.AccountRegionInfo;
+import com.cloudbees.sdk.commands.app.model.AccountRegionListResponse;
 import com.cloudbees.sdk.utils.Helper;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Fabian Donze
@@ -34,6 +38,10 @@ public abstract class  ApplicationBase extends Command {
 
     public void setAppid(String appid) {
         this.appid = appid;
+    }
+
+    protected String getAppid() {
+        return appid;
     }
 
     public void setAccount(String account) {
@@ -57,12 +65,15 @@ public abstract class  ApplicationBase extends Command {
     protected boolean postParseCommandLine() {
         if (!super.postParseCommandLine()) return false;
 
+        return postParseParameters();
+    }
+
+    protected boolean postParseParameters() {
         if (getParameters().size() > 0 && appid == null) {
             String str = getParameters().get(0);
             if (isParameter(str) < 0)
                 setAppid(str);
         }
-
         return true;
     }
 
@@ -96,4 +107,50 @@ public abstract class  ApplicationBase extends Command {
         return appid;
     }
 
+    protected AccountRegionInfo getApplicationRegionInfo(AppClient client, String appId) {
+        try {
+            ServiceResourceInfo resourceInfo = client.serviceResourceInfo("cb-app", appId);
+            Map<String, String> config= resourceInfo.getConfig();
+            if (config != null) {
+                String region = config.get("region");
+                if (region != null) {
+                    String parts[] = appId.split("/");
+                    AccountRegionListResponse res = client.accountRegionList(parts[0], null);
+                    return getRegionInfo(res, region);
+                }
+            }
+        } catch (Exception e) {
+            if (!e.getMessage().toLowerCase().contains("no such resource"))
+                System.err.println("Error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    protected AppClient getAppClient(String appId) throws IOException {
+        AppClient client = getBeesClient(AppClient.class);
+        AccountRegionInfo endPoint = getApplicationRegionInfo(client, appId);
+        if (endPoint != null) {
+            String apiUrl = endPoint.getSettings().get("api.url");
+            BeesClientConfiguration clientConfiguration = client.getBeesClientConfiguration();
+            String currentApiUrl = clientConfiguration.getServerApiUrl();
+            if (!currentApiUrl.equalsIgnoreCase(apiUrl)) {
+                System.err.println(String.format("WARNING: Application [%s] defined in the [%s] region, using [%s] API end point",
+                        appId, endPoint.getName(), endPoint.getName()));
+                clientConfiguration.setServerApiUrl(apiUrl);
+                client = new AppClient(clientConfiguration);
+                client.setVerbose(isVerbose());
+            }
+        }
+        return client;
+    }
+
+    private AccountRegionInfo getRegionInfo(AccountRegionListResponse regions, String region) {
+        for (AccountRegionInfo regionInfo : regions.getRegions()) {
+            if (regionInfo.getName().equalsIgnoreCase(region)) {
+                return regionInfo;
+            }
+        }
+        return null;
+    }
 }

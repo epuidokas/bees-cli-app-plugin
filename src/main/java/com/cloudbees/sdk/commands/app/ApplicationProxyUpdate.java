@@ -102,7 +102,7 @@ public class ApplicationProxyUpdate extends ApplicationBase {
             }
         }
 
-        AppClient client = getBeesClient(AppClient.class);
+        AppClient client = getAppClient(appId);
 
         if (alias != null)
             settings.put("aliases", alias);

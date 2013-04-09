@@ -42,11 +42,7 @@ import java.util.zip.ZipOutputStream;
  */
 @BeesCommand(group="Application", description = "Deploy an application")
 @CLICommand("app:deploy")
-public class ApplicationDeploy extends Command {
-    /**
-     * The id of the stax application.
-     */
-    private String appid;
+public class ApplicationDeploy extends ApplicationBase {
 
     /**
      * Configuration environments to use.
@@ -114,35 +110,33 @@ public class ApplicationDeploy extends Command {
 
     @Override
     protected boolean preParseCommandLine() {
-        // add the Options
-        addOption( "a", "appid", true, "CloudBees application ID" );
-        addOption( "m", "message", true, "Message describing the deployment" );
-        addOption( "e", "environment", true, "Environment configurations to deploy" );
-        addOption( "d", "delta", true, "true to enable, false to disable delta upload (default: true)" );
-        addOption( "b", "baseDir", true, "Base directory (default: '.')");
-        addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'src/main/conf/')", true);
-        addOption("t", "type", true, "Application container type");
-        addOption( "P", null, true, "Application config parameter name=value" );
-        addOption( "R", null, true, "Runtime config parameter name=value" );
+        if (super.preParseCommandLine()) {
+            // add the Options
+            addOption( "m", "message", true, "Message describing the deployment" );
+            addOption( "e", "environment", true, "Environment configurations to deploy" );
+            addOption( "d", "delta", true, "true to enable, false to disable delta upload (default: true)" );
+            addOption( "b", "baseDir", true, "Base directory (default: '.')");
+            addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'src/main/conf/')", true);
+            addOption("t", "type", true, "Application container type");
+            addOption( "P", null, true, "Application config parameter name=value" );
+            addOption( "R", null, true, "Runtime config parameter name=value" );
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    protected boolean postParseCommandLine() {
-        if (super.postParseCommandLine()) {
-            boolean ok = true;
-            List<String> otherArgs = getParameters();
-            if (otherArgs.size() > 0) {
-                setWarFile(new File(getBaseDir(), otherArgs.get(0)));
-            }
-            if (otherArgs.size() == 0 || warFile == null)
-                ok = false;
-
-            return ok;
-
+    protected boolean postParseParameters() {
+        boolean ok = true;
+        List<String> otherArgs = getParameters();
+        if (otherArgs.size() > 0) {
+            setWarFile(new File(getBaseDir(), otherArgs.get(0)));
         }
-        return false;
+        if (otherArgs.size() == 0 || warFile == null)
+            ok = false;
+
+        return ok;
     }
 
     @Override
@@ -179,10 +173,6 @@ public class ApplicationDeploy extends Command {
 
     public void setDescriptorDir(String descriptorDir) {
         this.descriptorDir = descriptorDir;
-    }
-
-    public void setAppid(String appid) {
-        this.appid = appid;
     }
 
     public void setEnvironment(String environment) {
@@ -264,25 +254,17 @@ public class ApplicationDeploy extends Command {
         }
 
         // deploy the application to the server
-        AppConfig appConfig = getAppConfig(  deployFile,
+        AppConfig appConfig = AppHelper.getAppConfig(  deployFile,
                                                     Helper.getEnvironmentList(environment),
                                                     new String[]{"deploy"});
-        initAppId(appConfig);
 
-        String defaultAppDomain = getConfigProperties().getProperty("bees.project.app.domain");
-        String[] appIdParts = appid.split("/");
-        if (appIdParts.length < 2) {
-            if (defaultAppDomain != null && !defaultAppDomain.equals("")) {
-                appid = defaultAppDomain + "/" + appid;
-            } else {
-                throw new RuntimeException("default app account could not be determined, appid needs to be fully-qualified ");
-            }
-        }
+        String appid = getAppid();
+        appid = initAppId(appid, appConfig);
 
         environment = StringHelper.join(appConfig.getAppliedEnvironments().toArray(new String[0]), ",");
 
         System.out.println(String.format("Deploying application %s (environment: %s): %s", appid, environment, deployFile));
-        BeesClient client = getBeesClient(BeesClient.class);
+        AppClient client = getAppClient(appid);
 
         boolean deployDelta = (delta == null || delta.equalsIgnoreCase("true")) ? true : false;
 
@@ -345,7 +327,7 @@ public class ApplicationDeploy extends Command {
         return true;
     }
 
-    private void initAppId(AppConfig appConfig) throws IOException
+    private String initAppId(String appid, AppConfig appConfig) throws IOException
     {
         if (appid == null || appid.equals("")) {
             appid = appConfig.getApplicationId();
@@ -356,39 +338,26 @@ public class ApplicationDeploy extends Command {
             if (appid == null || appid.equals(""))
                 throw new IllegalArgumentException("No application id specified");
         }
-    }
 
-    private AppConfig getAppConfig(File deployZip,
-                                         final String[] environments,
-                                         final String[] implicitEnvironments) throws IOException {
-        final AppConfig appConfig = new AppConfig();
-
-        FileInputStream fin = new FileInputStream(deployZip);
-        try {
-            ZipHelper.unzipFile(fin, new ZipHelper.ZipEntryHandler() {
-                public void unzip(ZipEntry entry, InputStream zis) throws IOException {
-                    if (entry.getName().equals(
-                            "META-INF/stax-application.xml") ||
-                            entry.getName().equals("WEB-INF/stax-web.xml") ||
-                            entry.getName().equals("WEB-INF/cloudbees-web.xml")) {
-                        AppConfigHelper.load(appConfig, zis, null,
-                                environments,
-                                implicitEnvironments);
-                    }
-                }
-            }, false);
-        } finally {
-            fin.close();
+        String[] appIdParts = appid.split("/");
+        if (appIdParts.length < 2) {
+            String defaultAppDomain = getAccount();
+            if (defaultAppDomain != null && !defaultAppDomain.equals("")) {
+                appid = defaultAppDomain + "/" + appid;
+            } else {
+                throw new RuntimeException("default app account could not be determined, appid needs to be fully-qualified ");
+            }
         }
 
-        return appConfig;
+        return appid;
     }
 
     private static void close(Closeable closeable) {
-    try {
-        if (closeable != null)
-            closeable.close();
-    } catch (IOException ignored) { }
+        try {
+            if (closeable != null)
+                closeable.close();
+        } catch (IOException ignored) {
+        }
     }
 
 }

@@ -123,7 +123,7 @@ public class ApplicationConfigUpdate extends ApplicationBase {
             }
         }
 
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getAppClient(appId);
 
         Map<String, String> rts = getRuntimeParameters();
         if (rts.size() > 0) {

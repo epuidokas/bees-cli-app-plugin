@@ -53,8 +53,9 @@ public class ApplicationTail extends ApplicationBase {
     protected boolean execute() throws Exception {
         if (logname == null) logname = "server";
 
-        BeesClient client = getBeesClient(BeesClient.class);
-        client.tailLog(getAppId(), logname, System.out);
+        String appid = getAppId();
+        AppClient client = getAppClient(appid);
+        client.tailLog(appid, logname, System.out);
 
         return true;
     }

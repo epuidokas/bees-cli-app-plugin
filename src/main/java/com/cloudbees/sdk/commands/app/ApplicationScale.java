@@ -81,7 +81,7 @@ public class ApplicationScale extends ApplicationBase {
         else
             quantity = -Integer.parseInt(getDown());
 
-        BeesClient client = getBeesClient(BeesClient.class);
+        AppClient client = getAppClient(appid);
         ApplicationScaleResponse res = client.applicationScale(appid, quantity);
         if (isTextOutput()) {
             System.out.println("application - " + appid + ": " + res.getStatus());

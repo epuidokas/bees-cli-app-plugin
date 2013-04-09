@@ -57,7 +57,7 @@ public class ApplicationRestart extends ApplicationBase {
             }
         }
 
-        BeesClient client = getBeesClient(BeesClient.class);
+        AppClient client = getAppClient(appid);
         ApplicationRestartResponse res = client.applicationRestart(appid);
 
         if (isTextOutput()) {
