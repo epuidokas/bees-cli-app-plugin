@@ -109,7 +109,7 @@ public class ApplicationProxyUpdate extends ApplicationBase {
 
         ApplicationStatusResponse res = client.applicationProxyUpdate(appId, getSettings());
         if (isTextOutput()) {
-            System.out.println("application proxy - " + appId + " updated: " + res.getStatus());
+            System.out.println("application proxy for " + appId + " : " + res.getStatus());
         } else
             printOutput(res, ApplicationStatusResponse.class);
 
