@@ -228,7 +228,7 @@ public class ApplicationRun extends ApplicationBase {
             System.out.println("Get application resources...");
             ApplicationResourceListResponse res = null;
             try {
-                AppClient client = getAppClient(appid);
+                AppClient client = getAppClient(getAppId());
 
                 res = client.applicationResourceList(getAppId(appid, null, null), null, null, environment);
 
