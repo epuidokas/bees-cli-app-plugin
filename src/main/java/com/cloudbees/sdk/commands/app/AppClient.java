@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.*;
-import com.cloudbees.sdk.commands.app.model.AccountAPIUrlsResponse;
 import com.cloudbees.sdk.commands.app.model.AccountRegionInfo;
 import com.cloudbees.sdk.commands.app.model.AccountRegionListResponse;
 import com.thoughtworks.xstream.XStream;
@@ -235,19 +234,6 @@ public class AppClient extends StaxClient {
         traceResponse(response);
         ApplicationStatusResponse apiResponse =
             (ApplicationStatusResponse)readResponse(response);
-        return apiResponse;
-    }
-
-    public AccountAPIUrlsResponse accountAPIUrls(String account) throws Exception
-    {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("account", account);
-        String url = getRequestURL("account.api.urls", params);
-        trace("API call: " + url);
-        String response = executeRequest(url);
-        traceResponse(response);
-        AccountAPIUrlsResponse apiResponse =
-                (AccountAPIUrlsResponse)readResponse(response);
         return apiResponse;
     }
 
