@@ -327,7 +327,7 @@ public class ApplicationDeploy extends ApplicationBase {
         return true;
     }
 
-    private String initAppId(String appid, AppConfig appConfig) throws IOException
+    protected String initAppId(String appid, AppConfig appConfig) throws IOException
     {
         if (appid == null || appid.equals("")) {
             appid = appConfig.getApplicationId();
@@ -352,7 +352,7 @@ public class ApplicationDeploy extends ApplicationBase {
         return appid;
     }
 
-    private static void close(Closeable closeable) {
+    protected static void close(Closeable closeable) {
         try {
             if (closeable != null)
                 closeable.close();
