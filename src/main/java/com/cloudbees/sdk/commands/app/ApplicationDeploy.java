@@ -292,7 +292,7 @@ public class ApplicationDeploy extends ApplicationBase {
 
         Map<String, String> variables = getConfigVariables();
         if (variables.size() > 0)
-            System.out.println("Deploy variables: " + variables);
+            System.out.println("Config parameters: " + variables);
 
         String deployType;
         if(deployFile.getName().endsWith(".war")) {

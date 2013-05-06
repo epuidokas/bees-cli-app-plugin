@@ -19,11 +19,11 @@ package com.cloudbees.sdk.commands.app;
 import com.cloudbees.api.ApplicationCreateResponse;
 import com.cloudbees.api.CIInfo;
 import com.cloudbees.api.RepositoryInfo;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +42,9 @@ public class ApplicationCreate extends ApplicationBase {
     private String type;
     private String useRepo;
     private String ciOptions;
+    private Map<String, String> applicationParameters = new HashMap<String, String>();
+    private Map<String, String> configVariables = new HashMap<String, String>();
+    private Map<String, String> runtimeParameters = new HashMap<String, String>();
 
     public ApplicationCreate() {
         setArgumentExpected(0);
@@ -123,6 +126,35 @@ public class ApplicationCreate extends ApplicationBase {
         this.ciOptions = ciOptions;
     }
 
+    public Map<String, String> getConfigVariables() {
+        return configVariables;
+    }
+
+    public void setP(String var) {
+        var = var.trim();
+        int idx = isParameter(var);
+        if (idx > -1) {
+            configVariables.put(var.substring(0, idx), var.substring(idx + 1));
+        }
+    }
+
+    public Map<String, String> getRuntimeParameters() {
+        return runtimeParameters;
+    }
+
+    public void setR(String rt) {
+        rt = rt.trim();
+        int idx = isParameter(rt);
+        if (idx > -1) {
+            runtimeParameters.put(rt.substring(0, idx), rt.substring(idx + 1));
+        }
+    }
+
+    @Override
+    protected String getUsageMessage() {
+        return "APPLICATION_ID [parameterX=valueY]";
+    }
+
     @Override
     protected boolean preParseCommandLine() {
         if(super.preParseCommandLine()) {
@@ -136,7 +168,25 @@ public class ApplicationCreate extends ApplicationBase {
             addOption( "rt", "repoType", true, "the repository type [git, svn], default: git", true);
             addOption( "ct", "ciType", true, "the Continuous Integration type [maven, play], default: maven");
             addOption( "t", "type", true, "the deployment container type [tomcat, jboss], default: tomcat");
+            addOption( "P", null, true, "Application config parameter name=value" );
+            addOption( "R", null, true, "Runtime config parameter name=value" );
 
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean postParseCommandLine() {
+        if (super.postParseCommandLine()) {
+            List otherArgs = getCommandLine().getArgList();
+            for (int i=0; i<otherArgs.size(); i++) {
+                String str = (String)otherArgs.get(i);
+                int idx = isParameter(str);
+                if (idx > -1) {
+                    applicationParameters.put(str.substring(0, idx), str.substring(idx + 1));
+                }
+            }
             return true;
         }
         return false;
@@ -176,9 +226,16 @@ public class ApplicationCreate extends ApplicationBase {
             parameters.put("app_type", getType());
         }
 
-        StaxClient client = getBeesClient(StaxClient.class);
+        Map<String, String> rts = getRuntimeParameters();
+        if (rts.size() > 0) {
+            for (Map.Entry<String,String> entry : rts.entrySet()) {
+                applicationParameters.put("runtime." + entry.getKey(), entry.getValue());
+            }
+        }
 
-        ApplicationCreateResponse res = client.applicationCreate(appid, parameters);
+        AppClient client = getBeesClient(AppClient.class);
+
+        ApplicationCreateResponse res = client.applicationCreate(appid, parameters, applicationParameters, getConfigVariables());
         if (isTextOutput()) {
             com.cloudbees.api.ApplicationInfo applicationInfo = res.getApplicationInfo();
             System.out.println("Application: " + applicationInfo.getId());

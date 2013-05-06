@@ -252,6 +252,22 @@ public class AppClient extends StaxClient {
         return apiResponse;
     }
 
+    public ApplicationCreateResponse applicationCreate(String appId, Map<String, String> parameters, Map<String, String> appParameters, Map<String, String> appVariables) throws Exception
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("app_id", appId);
+        params.put("parameters", createParameter(parameters));
+        params.put("app_parameters", createParameter(appParameters));
+        params.put("app_variables", createParameter(appVariables));
+        String url = getRequestURL("application.create", params);
+        trace("API call: " + url);
+        String response = executeRequest(url);
+        traceResponse(response);
+        ApplicationCreateResponse apiResponse =
+                (ApplicationCreateResponse)readResponse(response);
+        return apiResponse;
+    }
+
     protected XStream getXStream() throws Exception
     {
         XStream xstream = super.getXStream();
