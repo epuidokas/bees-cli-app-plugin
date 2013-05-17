@@ -18,14 +18,11 @@ package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ApplicationDeployArchiveResponse;
 import com.cloudbees.api.ApplicationDeployArgs;
-import com.cloudbees.api.BeesClient;
 import com.cloudbees.api.HashWriteProgress;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
-import com.cloudbees.sdk.commands.Command;
 import com.cloudbees.sdk.utils.Helper;
 import com.staxnet.appserver.config.AppConfig;
-import com.staxnet.appserver.config.AppConfigHelper;
 import com.staxnet.appserver.utils.StringHelper;
 import com.staxnet.appserver.utils.ZipHelper;
 
@@ -34,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -317,12 +313,12 @@ public class ApplicationDeploy extends ApplicationBase {
         if (deployDelta)
             argBuilder = argBuilder.withIncrementalDeployment();
 
-        ApplicationDeployArchiveResponse res = client.applicationDeployArchive(argBuilder.build());
+            ApplicationDeployArchiveResponse res = client.applicationDeployArchive(argBuilder.build());
 
-        if (isTextOutput())
-            System.out.println("Application " + res.getId() + " deployed: " + res.getUrl());
-        else
-            printOutput(res, ApplicationDeployArchiveResponse.class);
+            if (isTextOutput())
+                System.out.println("Application " + res.getId() + " deployed: " + res.getUrl());
+            else
+                printOutput(res, ApplicationDeployArchiveResponse.class);
 
         return true;
     }

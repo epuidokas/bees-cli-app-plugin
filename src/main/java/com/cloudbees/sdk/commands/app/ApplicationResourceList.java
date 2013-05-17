@@ -18,7 +18,6 @@ package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceResourceInfo;
 import com.cloudbees.api.ServiceResourceListResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
@@ -56,7 +55,7 @@ public class ApplicationResourceList extends ApplicationResourceBase {
 
     @Override
     protected boolean execute() throws Exception {
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceListResponse res = client.serviceResourceList(getServiceName(), getAccount(), getType());
         List<ServiceResourceInfo> resources = new ArrayList<ServiceResourceInfo>();
         for (ServiceResourceInfo resource: res.getResources()) {

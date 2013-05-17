@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceResourceDeleteResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.utils.Helper;
@@ -68,7 +67,7 @@ public class ApplicationResourceDelete extends ApplicationResourceBase {
             }
         }
 
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceDeleteResponse res = client.serviceResourceDelete(getServiceName(), resource);
         if (isTextOutput()) {
             if(res.isDeleted()) {

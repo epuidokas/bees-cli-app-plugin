@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceResourceInfo;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
@@ -100,7 +99,7 @@ public class ApplicationRouterUpdate extends ApplicationResourceBase {
         String[] parts = resourceId.split("/");
         if (parts.length == 1)
             resourceId = getAccount() + "/" + resourceId;
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceInfo resource = client.serviceResourceUpdate(getServiceName(), resourceId, getSettings());
         if (isTextOutput()) {
             System.out.println("Resource: " + resource.getId());

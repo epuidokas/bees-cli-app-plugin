@@ -18,7 +18,6 @@ package com.cloudbees.sdk.commands.app;
 
 
 import com.cloudbees.api.ApplicationConfigUpdateResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.utils.Helper;

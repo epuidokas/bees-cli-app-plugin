@@ -18,7 +18,6 @@ package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ResourceBindingInfo;
 import com.cloudbees.api.ServiceResourceBindingListResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 
@@ -37,7 +36,7 @@ public class ApplicationBindingList extends ApplicationBase {
 
     @Override
     protected boolean execute() throws Exception {
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceBindingListResponse res = client.resourceBindingList("cb-app", getAppId());
         if (isTextOutput()) {
             System.out.println("Applications bindings:");

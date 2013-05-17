@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceSubscriptionInvokeInfo;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.commands.services.ServiceBase;
@@ -83,7 +82,7 @@ public class ApplicationSSLCertValidate extends ServiceBase {
         if (!new File(getPrivateKey()).exists()) {
             throw new IllegalArgumentException("Private key file not found: " + getPrivateKey());
         }
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceSubscriptionInvokeInfo invokeInfo = client.serviceSubscriptionInvoke("cb-app", getAccount(), "validate_ssl_cert", settings);
         System.out.println(invokeInfo.getMessage());
         return true;

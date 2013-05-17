@@ -18,8 +18,6 @@ package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.*;
 import com.cloudbees.sdk.commands.Command;
-import com.cloudbees.sdk.commands.app.model.AccountRegionInfo;
-import com.cloudbees.sdk.commands.app.model.AccountRegionListResponse;
 import com.cloudbees.sdk.utils.Helper;
 import java.io.IOException;
 import java.util.Map;

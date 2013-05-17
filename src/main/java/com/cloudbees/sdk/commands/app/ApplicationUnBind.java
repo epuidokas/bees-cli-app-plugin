@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceResourceUnBindResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.commands.services.ServiceBase;
@@ -65,7 +64,7 @@ public class ApplicationUnBind extends ServiceBase {
     protected boolean execute() throws Exception {
         initAppId();
 
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceUnBindResponse res = client.resourceUnBind("cb-app", getAppid(), getAlias());
         if (isTextOutput()) {
 //            System.out.println("Message: " + res.getMessage());

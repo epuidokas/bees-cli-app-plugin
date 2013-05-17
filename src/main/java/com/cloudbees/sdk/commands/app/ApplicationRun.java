@@ -16,9 +16,7 @@
 
 package com.cloudbees.sdk.commands.app;
 
-import com.cloudbees.api.ApplicationResourceListResponse;
-import com.cloudbees.api.ParameterSettingsInfo;
-import com.cloudbees.api.ResourceSettingsInfo;
+import com.cloudbees.api.config.ResourceSettings;
 import com.cloudbees.sdk.CommandServiceImpl;
 import com.cloudbees.sdk.Plugin;
 import com.cloudbees.sdk.cli.BeesCommand;
@@ -28,7 +26,6 @@ import com.cloudbees.sdk.utils.Helper;
 import com.cloudbees.utils.ZipHelper;
 import com.staxnet.appserver.config.AppConfig;
 import com.staxnet.appserver.config.AppConfigHelper;
-import com.thoughtworks.xstream.XStream;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -226,23 +223,21 @@ public class ApplicationRun extends ApplicationBase {
         String appid = getAppid();
         if (fetchResources() && appid != null) {
             System.out.println("Get application resources...");
-            ApplicationResourceListResponse res = null;
+            List<ResourceSettings> res = null;
             try {
                 AppClient client = getAppClient(getAppId());
 
-                res = client.applicationResourceList(getAppId(appid, null, null), null, null, environment);
+                res = client.applicationResources(getAppId(appid, null, null), null, null, environment);
 
-                if (res.getResources() != null && res.getResources().size() > 0) {
+                if (res != null && res.size() > 0) {
                     // Generate appserver.xml file
+                    AppServerXML appServerXMLConfig = new AppServerXML();
+                    appServerXMLConfig.setResources(res);
+
                     FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(appserverXML);
-                        XStream xstream = new XStream();
-                        xstream.processAnnotations(ResourceSettingsInfo.class);
-                        xstream.processAnnotations(ParameterSettingsInfo.class);
-                        xstream.alias("appserver", ApplicationResourceListResponse.class);
-                        xstream.addImplicitCollection(ApplicationResourceListResponse.class, "resources");
-                        xstream.toXML(res, fos);
+                        AppServerXML.toXML(appServerXMLConfig, fos);
                         deleteAppserverXML = true;
                     } finally {
                         if (fos != null)

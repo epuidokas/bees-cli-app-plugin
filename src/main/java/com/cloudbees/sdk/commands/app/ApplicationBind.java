@@ -17,7 +17,6 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ServiceResourceBindResponse;
-import com.cloudbees.api.StaxClient;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.commands.services.ServiceBase;
@@ -134,7 +133,7 @@ public class ApplicationBind extends ServiceBase {
         // force resourceId input if not specified
         getResourceId();
 
-        StaxClient client = getBeesClient(StaxClient.class);
+        AppClient client = getBeesClient(AppClient.class);
         ServiceResourceBindResponse res = client.resourceBind("cb-app", getAppid(), getServiceName(), getResourceId(), getAlias(), getSettings());
         if (isTextOutput()) {
 //            System.out.println("Message: " + res.getMessage());
