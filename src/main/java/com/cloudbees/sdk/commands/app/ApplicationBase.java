@@ -105,29 +105,9 @@ public abstract class  ApplicationBase extends Command {
         return appid;
     }
 
-    protected AccountRegionInfo getApplicationRegionInfo(AppClient client, String appId) {
-        try {
-            ServiceResourceInfo resourceInfo = client.serviceResourceInfo("cb-app", appId);
-            Map<String, String> config= resourceInfo.getConfig();
-            if (config != null) {
-                String region = config.get("region");
-                if (region != null) {
-                    String parts[] = appId.split("/");
-                    AccountRegionListResponse res = client.accountRegionList(parts[0], null);
-                    return getRegionInfo(res, region);
-                }
-            }
-        } catch (Exception e) {
-            if (!e.getMessage().toLowerCase().contains("no such resource"))
-                System.err.println("Error: " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    protected AppClient getAppClient(String appId) throws IOException {
+     protected AppClient getAppClient(String appId) throws IOException {
         AppClient client = getBeesClient(AppClient.class);
-        AccountRegionInfo endPoint = getApplicationRegionInfo(client, appId);
+        AccountRegionInfo endPoint = AppHelper.getApplicationRegionInfo(client, appId);
         if (endPoint != null) {
             String apiUrl = endPoint.getSettings().get("api.url");
             BeesClientConfiguration clientConfiguration = client.getBeesClientConfiguration();
@@ -143,12 +123,4 @@ public abstract class  ApplicationBase extends Command {
         return client;
     }
 
-    private AccountRegionInfo getRegionInfo(AccountRegionListResponse regions, String region) {
-        for (AccountRegionInfo regionInfo : regions.getRegions()) {
-            if (regionInfo.getName().equalsIgnoreCase(region)) {
-                return regionInfo;
-            }
-        }
-        return null;
-    }
 }

@@ -16,6 +16,10 @@
 
 package com.cloudbees.sdk.commands.app;
 
+import com.cloudbees.api.AccountRegionInfo;
+import com.cloudbees.api.AccountRegionListResponse;
+import com.cloudbees.api.BeesClientConfiguration;
+import com.cloudbees.api.ServiceResourceInfo;
 import com.cloudbees.sdk.utils.Helper;
 import com.staxnet.appserver.config.AppConfig;
 import com.staxnet.appserver.config.AppConfigHelper;
@@ -25,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 
 /**
@@ -74,5 +79,34 @@ public class AppHelper {
         }
 
         return appConfig;
+    }
+
+    public static AccountRegionInfo getApplicationRegionInfo(AppClient client, String appId) {
+        try {
+            ServiceResourceInfo resourceInfo = client.serviceResourceInfo("cb-app", appId);
+            Map<String, String> config= resourceInfo.getConfig();
+            if (config != null) {
+                String region = config.get("region");
+                if (region != null) {
+                    String parts[] = appId.split("/");
+                    AccountRegionListResponse res = client.accountRegionList(parts[0], null);
+                    return getRegionInfo(res, region);
+                }
+            }
+        } catch (Exception e) {
+            if (!e.getMessage().toLowerCase().contains("no such resource"))
+                System.err.println("Error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    private static AccountRegionInfo getRegionInfo(AccountRegionListResponse regions, String region) {
+        for (AccountRegionInfo regionInfo : regions.getRegions()) {
+            if (regionInfo.getName().equalsIgnoreCase(region)) {
+                return regionInfo;
+            }
+        }
+        return null;
     }
 }
