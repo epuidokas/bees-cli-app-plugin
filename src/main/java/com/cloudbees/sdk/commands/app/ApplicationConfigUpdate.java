@@ -117,7 +117,7 @@ public class ApplicationConfigUpdate extends ApplicationBase {
         String appId = getAppId();
 
         if (force == null || !force.booleanValue()) {
-            if (!Helper.promptMatches("This command will restart your application, are you sure you want to update this application [" + appId + "]: (y/n) ", "[yY].*")) {
+            if (!Helper.promptMatches("This command might restart your application, are you sure you want to update this application [" + appId + "]: (y/n) ", "[yY].*")) {
                 return true;
             }
         }
