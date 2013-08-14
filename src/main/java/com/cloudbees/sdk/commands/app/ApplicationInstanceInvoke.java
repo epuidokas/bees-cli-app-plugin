@@ -58,6 +58,11 @@ public class ApplicationInstanceInvoke extends ApplicationInstanceBase {
         this.timeout = timeout;
     }
 
+    @Override
+    protected String getUsageMessage() {
+        return "[INSTANCE_ID]";
+    }
+
     public String getAppid() throws IOException {
         String[] appIdParts = appid.split("/");
         if (appIdParts.length < 2) {
