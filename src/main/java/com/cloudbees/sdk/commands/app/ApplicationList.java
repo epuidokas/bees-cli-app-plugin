@@ -36,6 +36,7 @@ import java.util.Map;
 @CLICommand("app:list")
 public class ApplicationList extends Command {
     private String account;
+    private Boolean more;
 
     public ApplicationList() {
     }
@@ -44,6 +45,7 @@ public class ApplicationList extends Command {
     protected boolean preParseCommandLine() {
         // add the Options
         addOption( "a", "account", true, "Account Name" );
+        addOption( null, "more", false, "Display more information" );
 
         return true;
     }
@@ -61,26 +63,52 @@ public class ApplicationList extends Command {
         return account;
     }
 
+    public boolean displayMore() {
+        return more != null ? more : false;
+    }
+
+    public void setMore(Boolean more) {
+        this.more = more;
+    }
+
     @Override
     protected boolean execute() throws Exception {
         BeesClient client = getBeesClient(BeesClient.class);
         ApplicationListResponse res = client.applicationList(getAccount());
 
         if (isTextOutput()) {
-            System.out.println("Application                Status    URL                           Instance(s)");
+            if (displayMore())
+                System.out.println("Application                Status    URL                           Instance(s) Container        Pool");
+            else
+                System.out.println("Application                Status    URL                           Instance(s)");
             System.out.println();
             List<String> list = new ArrayList<String>();
             for (com.cloudbees.api.ApplicationInfo applicationInfo: res.getApplications()) {
                 String msg = s(applicationInfo.getId(), 26)+ " " + s(applicationInfo.getStatus(), 10) + s(applicationInfo.getUrls()[0], 38);
                 Map<String, String> settings = applicationInfo.getSettings();
                 if (settings != null) {
-                    msg += " " + settings.get("clusterSize");
+                    msg += " " + s(settings.get("clusterSize"),2);
+                    if (displayMore()) {
+                        String more = " ";
+                        String container = settings.get("container") != null ? settings.get("container") : "free";
+                        if (container.startsWith("java_")) container = container.substring(5);
+                        more += container;
+                        String type = settings.get("containerType");
+                        if (type != null) more += " " + type;
+                        msg += s(more, 17);
+                        msg += " " + settings.get("serverPool");
+                    }
                 }
                 list.add(msg);
             }
             Collections.sort(list);
-            for (String app: list)
+            for (String app: list) {
                 System.out.println(app);
+            }
+            if (displayMore()) {
+                System.out.println();
+                System.out.println("Total applications: " + list.size());
+            }
         } else {
             printOutput(res, ApplicationInfo.class, ApplicationListResponse.class);
         }
