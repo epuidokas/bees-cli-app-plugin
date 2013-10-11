@@ -8,7 +8,7 @@
 
   <groupId>org.cloudbees.sdk.plugins</groupId>
   <artifactId>app-plugin</artifactId>
-  <version>1.5.3-SNAPSHOT</version>
+  <version>1.5.3</version>
 
     <build>
         <plugins>
