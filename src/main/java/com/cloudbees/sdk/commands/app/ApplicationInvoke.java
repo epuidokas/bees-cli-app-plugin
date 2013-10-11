@@ -17,6 +17,7 @@
 package com.cloudbees.sdk.commands.app;
 
 import com.cloudbees.api.ApplicationInstanceInvokeResponse;
+import com.cloudbees.api.ApplicationInstanceListResponse;
 import com.cloudbees.sdk.cli.BeesCommand;
 import com.cloudbees.sdk.cli.CLICommand;
 import com.cloudbees.sdk.utils.Helper;
@@ -28,20 +29,16 @@ import java.util.Map;
 /**
  * @author Fabian Donze
  */
-@BeesCommand(group="Application", description = "Invoke an application instance control script")
-@CLICommand("app:instance:invoke")
-public class ApplicationInstanceInvoke extends ApplicationInstanceBase {
+@BeesCommand(group="Application", description = "Invoke a control script on all application instances")
+@CLICommand("app:invoke")
+public class ApplicationInvoke extends ApplicationBase {
     private String script;
     private String args;
     private String timeout;
+    private String account;
 
-    public ApplicationInstanceInvoke() {
+    public ApplicationInvoke() {
         super();
-    }
-
-    @Override
-    protected String getUsageMessage() {
-        return "[INSTANCE_ID]";
     }
 
     public String getScript() throws IOException {
@@ -73,24 +70,30 @@ public class ApplicationInstanceInvoke extends ApplicationInstanceBase {
 
     @Override
     protected boolean execute() throws Exception {
-        String instanceId = getInstanceId();
+        // Invoke all instances
+        String appid = getAppId();
+        AppClient client = getAppClient(appid);
+        ApplicationInstanceListResponse res = client.applicationInstanceList(appid);
+        for (com.cloudbees.api.ApplicationInstanceInfo instanceInfo : res.getInstances()) {
+            invokeInstance(client, instanceInfo.getId());
+        }
+        return true;
+    }
 
+    protected void invokeInstance(AppClient client, String instanceId) throws Exception {
         Map<String, String> parameters = new HashMap<String, String>();
         if (timeout != null)
             parameters.put("timeout", Integer.valueOf(timeout).toString());
         if (args != null)
             parameters.put("args", args);
 
-        AppClient client = getBeesClient(AppClient.class);
         ApplicationInstanceInvokeResponse res = client.applicationInstanceInvoke(instanceId, getScript(), parameters);
 
         if (isTextOutput()) {
-            System.out.println("Exit code: " + res.getExitCode());
+            System.out.println(String.format("%s > Exit code: %s",instanceId, res.getExitCode()));
             System.out.println(res.getOut());
         } else
             printOutput(res, ApplicationInstanceInvokeResponse.class);
-
-        return true;
     }
 
 }
