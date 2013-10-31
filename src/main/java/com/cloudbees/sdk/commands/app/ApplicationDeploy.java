@@ -308,17 +308,15 @@ public class ApplicationDeploy extends ApplicationBase {
                 .description(message).deployPackage(deployFile, deployType)
                 .withParams(parameters)
                 .withVars(getConfigVariables())
+                .incrementalDeployment(deployDelta)
                 .withProgressFeedback(new HashWriteProgress());
 
-        if (deployDelta)
-            argBuilder = argBuilder.withIncrementalDeployment();
+        ApplicationDeployArchiveResponse res = client.applicationDeployArchive(argBuilder.build());
 
-            ApplicationDeployArchiveResponse res = client.applicationDeployArchive(argBuilder.build());
-
-            if (isTextOutput())
-                System.out.println("Application " + res.getId() + " deployed: " + res.getUrl());
-            else
-                printOutput(res, ApplicationDeployArchiveResponse.class);
+        if (isTextOutput())
+            System.out.println("Application " + res.getId() + " deployed: " + res.getUrl());
+        else
+            printOutput(res, ApplicationDeployArchiveResponse.class);
 
         return true;
     }
