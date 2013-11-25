@@ -109,7 +109,7 @@ public class ApplicationRun extends ApplicationBase {
         // add the Options
             addOption(null, "port", true, "server listen port (default: 8080)");
             addOption("e", "environment", true, "Environment configurations to run");
-            addOption("t", "tmpDir", true, "Local working directory where temp files can be created (default: 'temp')");
+            addOption("t", "tmpDir", true, "Local working directory where temp files can be created (default: 'tmp')");
             addOption("xd", "descriptorDir", true, "Directory containing application descriptors (default: 'conf')", true);
             addOption(null, "noResourceFetch", false, "do not fetch application resources");
 
